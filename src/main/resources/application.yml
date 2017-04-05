@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gakusei
+    username: gakusei
+    password: gakusei
+    driver-class-name: org.postgresql.Driver
