@@ -37,7 +37,7 @@ public class ContentDao {
     }
 
     public List<Lesson> getLessons() {
-        List<Lesson> query = jdbcTemplate.query("SELECT id, name, description FROM contentschema.lessons"
+        List<Lesson> query = jdbcTemplate.query("SELECT id, name, description FROM contentschema.lessons ORDER BY name"
                 , new Object[]{}, (rs, rowNum) ->
                         new Lesson(rs.getLong("id")
                                 , rs.getString("name")
@@ -49,5 +49,26 @@ public class ContentDao {
     public void addLesson(int id, String name, String description) {
         jdbcTemplate.update("INSERT INTO contentschema.lessons(id, name, description) VALUES (?,?,?)"
                 , id, name, description);
+    }
+
+    public List<Nugget> findExistingNuggets(String type, String reading, String writing) {
+        List<Nugget> result = null;
+        if ("vocabulary".equals(type)) {
+//            SELECT id, type, description, hidden FROM contentschema.nuggets as n
+//            WHERE id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid
+//                    AND f.data = 'たべる' AND f.type = 'reading')
+//            AND id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid
+//                    AND f.data = '食べる' AND f.type = 'writing')
+            result = jdbcTemplate.query("SELECT id, type, description, hidden FROM contentschema.nuggets as n" +
+                    " WHERE id in (SELECT nuggetid FROM contentschema.facts WHERE n.id = nuggetid " +
+                    " AND f.data = ? AND f.type = 'reading')" +
+                    " AND id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid " +
+                    " AND f.data = ? AND f.type = 'writing')", new Object[] {reading, writing}, (rs, rowNum) ->
+                    new Nugget(rs.getString("id")
+                            , rs.getString("type")
+                            , rs.getString("description")
+                            , rs.getString("hidden")));
+        }
+        return result;
     }
 }
