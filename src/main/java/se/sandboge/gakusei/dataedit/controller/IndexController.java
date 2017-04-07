@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import se.sandboge.gakusei.dataedit.content.ContentDao;
 
 @Controller
@@ -24,9 +25,21 @@ public class IndexController {
         return "index";
     }
 
+    @RequestMapping("/doaddlesson")
+    public String doAddLesson(
+            @RequestParam Integer id,
+            @RequestParam String name,
+            @RequestParam String description,
+            Model model) {
+        model.addAttribute("id", id);
+        model.addAttribute("name", name);
+        model.addAttribute("description", description);
+        contentDao.addLesson(id, name, description);
+        return "addlesson";
+    }
+
     @RequestMapping("/addlesson")
-    public String Addlesson(Model model) {
-        model.addAttribute("Hej", "Hej");
+    public String addLesson(Model model) {
         return "addlesson";
     }
 }

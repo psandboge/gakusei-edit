@@ -46,7 +46,7 @@ public class ContentDao {
         return query;
     }
 
-    public void addLesson(String id, String name, String description) {
+    public void addLesson(int id, String name, String description) {
         jdbcTemplate.update("INSERT INTO contentschema.lessons(id, name, description) VALUES (?,?,?)"
                 , id, name, description);
     }

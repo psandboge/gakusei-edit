@@ -9,12 +9,10 @@
 <!--<p th:text="${message}" />-->
 <!--<p th:text="'Testing: ' + ${clazz} + ', ' + ${method} + '!'" />-->
 <!--<p th:text="'Enter for: ' + ${word} + '  (' + ${reading} + ' - ' + ${svenska} + ') !'" />-->
-<form th:action="grammar">
-    <input th:name="answer" type="text"/>
-    <input th:name="class" type="hidden" th:value="${clazz}"/>
-    <input th:name="method" type="hidden" th:value="${method}"/>
-    <input th:name="type" type="hidden" th:value="${type}"/>
-    <input th:name="word" type="hidden" th:value="${word}"/>
+<form th:action="doaddlesson">
+    <input th:name="id" type="text"/>
+    <input th:name="name" type="text"/>
+    <input th:name="description" type="text"/>
     <input type="submit"/>
 </form>
 
