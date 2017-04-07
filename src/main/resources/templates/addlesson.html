@@ -6,9 +6,9 @@
 </head>
 <body>
 
-<p th:text="${message}" />
-<p th:text="'Testing: ' + ${clazz} + ', ' + ${method} + '!'" />
-<p th:text="'Enter for: ' + ${word} + '  (' + ${reading} + ' - ' + ${svenska} + ') !'" />
+<!--<p th:text="${message}" />-->
+<!--<p th:text="'Testing: ' + ${clazz} + ', ' + ${method} + '!'" />-->
+<!--<p th:text="'Enter for: ' + ${word} + '  (' + ${reading} + ' - ' + ${svenska} + ') !'" />-->
 <form th:action="grammar">
     <input th:name="answer" type="text"/>
     <input th:name="class" type="hidden" th:value="${clazz}"/>
@@ -19,6 +19,6 @@
 </form>
 
 <a href="/">Hem</a>
-<a th:href="${link}">Hjälp</a>
+<!--<a th:href="${link}">Hjälp</a>-->
 </body>
 </html>

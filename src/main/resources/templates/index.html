@@ -3,10 +3,28 @@
 <head>
     <title>Gakusei Data Editor</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/dataedit.css"/>
 </head>
 <body>
+<!--/*@thymesVar id="hej" type="String"*/-->
+<h1 th:text="${hej}"></h1>
 
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!--/*@thymesVar id="lessons" type="List<se.sandboge.gakusei.dataedit.content.Lesson>"*/-->
+    <tr th:each="lesson:${lessons}">
+        <td th:text="${lesson.id}"></td>
+        <td th:text="${lesson.name}"></td>
+    </tr>
+    </tbody>
+</table>
 
-<a href="/addlesson.html">Lägg till lektion</a>
+<a href="/addlesson">Lägg till lektion</a>
 </body>
 </html>
