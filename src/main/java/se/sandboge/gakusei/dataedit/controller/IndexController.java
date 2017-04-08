@@ -42,4 +42,19 @@ public class IndexController {
     public String addLesson(Model model) {
         return "addlesson";
     }
+
+    @RequestMapping("/addword")
+    public String addWord(Model model) {
+        return "addword";
+    }
+
+    @RequestMapping("/dofindword")
+    public String addWord(
+            @RequestParam(defaultValue = "") String reading,
+            @RequestParam(defaultValue = "") String writing,
+            Model model) {
+
+        return "addword";
+    }
+
 }

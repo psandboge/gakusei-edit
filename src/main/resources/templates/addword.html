@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gakusei Data Editor</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h1>Lägg till nytt ord</h1>
+<!--<p th:text="${message}" />-->
+<!--<p th:text="'Testing: ' + ${clazz} + ', ' + ${method} + '!'" />-->
+<!--<p th:text="'Enter for: ' + ${word} + '  (' + ${reading} + ' - ' + ${svenska} + ') !'" />-->
+<h2>Sök ord</h2>
+<form th:action="dofindword">
+    <input th:name="reading" type="text"/>
+    <input th:name="writing" type="text"/>
+    <input th:name="type" value="vocabulary" type="hidden"/>
+    <input type="submit"/>
+</form>
+<h2>Lägg till ord</h2>
+<form th:action="doaddnugget">
+    <input th:name="id" type="text"/>
+    <input th:name="name" type="text"/>
+    <input th:name="description" type="text"/>
+    <input th:name="hidden" value="false" type="hidden"/>
+    <input type="submit"/>
+</form>
+
+<a href="/">Hem</a>
+</body>
+</html>
