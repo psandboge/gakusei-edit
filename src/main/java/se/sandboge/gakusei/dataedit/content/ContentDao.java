@@ -60,7 +60,17 @@ public class ContentDao {
 //            AND id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid
 //                    AND f.data = '食べる' AND f.type = 'writing')
             result = jdbcTemplate.query("SELECT id, type, description, hidden FROM contentschema.nuggets as n" +
-                    " WHERE id in (SELECT nuggetid FROM contentschema.facts WHERE n.id = nuggetid " +
+                    " WHERE type <> 'kanji' AND id in (SELECT nuggetid FROM contentschema.facts WHERE n.id = nuggetid " +
+                    " AND f.data = ? AND f.type = 'reading')" +
+                    " AND id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid " +
+                    " AND f.data = ? AND f.type = 'writing')", new Object[] {reading, writing}, (rs, rowNum) ->
+                    new Nugget(rs.getString("id")
+                            , rs.getString("type")
+                            , rs.getString("description")
+                            , rs.getString("hidden")));
+        } else {
+            result = jdbcTemplate.query("SELECT id, type, description, hidden FROM contentschema.nuggets as n" +
+                    " WHERE type = 'kanji' AND id in (SELECT nuggetid FROM contentschema.facts WHERE n.id = nuggetid " +
                     " AND f.data = ? AND f.type = 'reading')" +
                     " AND id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid " +
                     " AND f.data = ? AND f.type = 'writing')", new Object[] {reading, writing}, (rs, rowNum) ->
@@ -71,4 +81,29 @@ public class ContentDao {
         }
         return result;
     }
+
+    public List<Fact> findFactsForNugget(String nuggetId) {
+        return jdbcTemplate.query("SELECT id, type, data, description, nuggetid " +
+                " FROM contentschema.facts as n" +
+                " WHERE nuggetid = ?"
+                , new Object[] {nuggetId}, (rs, rowNum) ->
+                new Fact(rs.getLong("id")
+                        , rs.getString("type")
+                        , rs.getString("data")
+                        , rs.getString("description")
+                        , rs.getString("hidden")));
+    }
+
+    public List<Lesson> findConnectedLessonsForNugget(String nuggetId) {
+        List<Lesson> query = jdbcTemplate.query("SELECT id, name, description FROM contentschema.lessons " +
+                        " WHERE id in (SELECT lesson_id FROM contentschema.lessons_nuggets ln WHERE ln.nugget_id = ? )" +
+                        " ORDER BY name"
+                , new Object[]{nuggetId}, (rs, rowNum) ->
+                        new Lesson(rs.getLong("id")
+                                , rs.getString("name")
+                                , rs.getString("description")));
+        query.forEach(customer -> logger.info(customer.toString()));
+        return query;
+    }
+
 }
