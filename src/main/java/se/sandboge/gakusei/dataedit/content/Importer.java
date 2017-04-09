@@ -124,7 +124,8 @@ public class Importer {
         String id = nuggetMap.get("id").toString();
         String type = nuggetMap.get("type").toString();
         String description = nuggetMap.get("description").toString();
-        Nugget nugget = new Nugget(id, type, description, false);
+        Nugget nugget = new Nugget(id, type, description, true);
+        logger.info(nugget.toString());
     }
 
     private List<String> handleFact(String value, String separator) {

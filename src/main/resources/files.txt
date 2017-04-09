@@ -1,0 +1,15 @@
+/gcon.csv
+|
+§
+/n1b.csv
+|
+,
+/n2b.csv
+|
+,
+/n3b.csv
+|
+,
+/ono.csv
+|
+,

@@ -29,4 +29,14 @@ public class Nugget {
     public boolean getHidden() {
         return hidden;
     }
+
+    @Override
+    public String toString() {
+        return "Nugget{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", description='" + description + '\'' +
+                ", hidden=" + hidden +
+                '}';
+    }
 }
