@@ -6,6 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import se.sandboge.gakusei.dataedit.content.ContentDao;
+import se.sandboge.gakusei.dataedit.content.Nugget;
+
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 public class IndexController {
@@ -53,7 +57,14 @@ public class IndexController {
             @RequestParam(defaultValue = "") String reading,
             @RequestParam(defaultValue = "") String writing,
             Model model) {
+        model.addAttribute(reading);
+        model.addAttribute(writing);
 
+        List<Nugget> existingNuggets = Collections.EMPTY_LIST;
+        if (!reading.equals("") || !writing.equals("")) {
+            existingNuggets = contentDao.findExistingNuggets("vocabulary", reading, writing);
+        }
+        model.addAttribute("existingNuggets", existingNuggets);
         return "addword";
     }
 

@@ -59,15 +59,18 @@ public class ContentDao {
 //                    AND f.data = 'たべる' AND f.type = 'reading')
 //            AND id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid
 //                    AND f.data = '食べる' AND f.type = 'writing')
-            result = jdbcTemplate.query("SELECT id, type, description, hidden FROM contentschema.nuggets as n" +
-                    " WHERE type <> 'kanji' AND id in (SELECT nuggetid FROM contentschema.facts WHERE n.id = nuggetid " +
-                    " AND f.data = ? AND f.type = 'reading')" +
-                    " AND id in (SELECT nuggetid FROM contentschema.facts f WHERE n.id = nuggetid " +
-                    " AND f.data = ? AND f.type = 'writing')", new Object[] {reading, writing}, (rs, rowNum) ->
+            String searchtype = writing.isEmpty() ? "reading" : "writing";
+            String term = writing.isEmpty() ? reading : writing;
+            logger.info("Search type {}, term {}", searchtype, term);
+            result = jdbcTemplate.query(
+                    "SELECT n.id, n.type, n.description, n.hidden " +
+                    " FROM contentschema.nuggets n, contentschema.facts f " +
+                    " WHERE n.id = f.nuggetid AND f.type = ? AND f.data = ?",
+                    new Object[] {searchtype, term}, (rs, rowNum) ->
                     new Nugget(rs.getString("id")
                             , rs.getString("type")
                             , rs.getString("description")
-                            , rs.getString("hidden")));
+                            , rs.getBoolean("hidden")));
         } else {
             result = jdbcTemplate.query("SELECT id, type, description, hidden FROM contentschema.nuggets as n" +
                     " WHERE type = 'kanji' AND id in (SELECT nuggetid FROM contentschema.facts WHERE n.id = nuggetid " +
@@ -77,8 +80,9 @@ public class ContentDao {
                     new Nugget(rs.getString("id")
                             , rs.getString("type")
                             , rs.getString("description")
-                            , rs.getString("hidden")));
+                            , rs.getBoolean("hidden")));
         }
+        result.forEach(customer -> logger.info(customer.toString()));
         return result;
     }
 

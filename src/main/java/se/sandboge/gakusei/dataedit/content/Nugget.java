@@ -5,9 +5,9 @@ public class Nugget {
     private String id;
     private String type;
     private String description;
-    private String hidden;
+    private boolean hidden;
 
-    public Nugget(String id, String type, String description, String hidden) {
+    public Nugget(String id, String type, String description, boolean hidden) {
         this.id = id;
         this.description = description;
         this.type = type;
@@ -26,7 +26,7 @@ public class Nugget {
         return type;
     }
 
-    public String getHidden() {
+    public boolean getHidden() {
         return hidden;
     }
 }
