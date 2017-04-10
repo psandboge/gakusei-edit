@@ -3,6 +3,7 @@ package se.sandboge.gakusei.dataedit.content;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -44,6 +45,8 @@ public class Importer {
         lessonNugget.put("KLL 20", 9L);
     }
 
+    private final ContentDao contentDao;
+
     private Logger logger = LoggerFactory.getLogger(Importer.class);
     private String prefix;
     private int errCount;
@@ -52,6 +55,11 @@ public class Importer {
     private boolean hasIdProp;
     private int idCount;
     private boolean isLive = false;
+
+    @Autowired
+    public Importer(ContentDao contentDao) {
+        this.contentDao = contentDao;
+    }
 
     public void readFiles(boolean isLive) {
         this.isLive = isLive;
@@ -174,47 +182,64 @@ public class Importer {
 
         logger.info(nugget.toString());
 
+        if (isLive) {
+            contentDao.createNugget(nugget);
+        }
+
         for (String r : readings) {
             Fact readingFact = new Fact(0, "reading", r, english, id);
-            logger.info(readingFact.toString());
+            storeFact(readingFact);
         }
         for (String r : writings) {
             Fact readingFact = new Fact(0, "writing", r, english, id);
-            logger.info(readingFact.toString());
+            storeFact(readingFact);
         }
         for (String r : swedishs) {
             Fact readingFact = new Fact(0, "swedish", r, english, id);
-            logger.info(readingFact.toString());
+            storeFact(readingFact);
         }
         for (String r : englishs) {
             Fact readingFact = new Fact(0, "english", r, english, id);
-            logger.info(readingFact.toString());
+            storeFact(readingFact);
         }
         for (String r : genkis) {
             Fact readingFact = new Fact(0, "genki", r, english, id);
             LessonNugget lessonNugget = new LessonNugget(getGenki(r), id);
-            logger.info(lessonNugget.toString());
-            logger.info(readingFact.toString());
+            storeFact(readingFact, lessonNugget);
         }
         for (String r : klls) {
             Fact readingFact = new Fact(0, "kll", r, english, id);
             LessonNugget lessonNugget = new LessonNugget(getKlls(r), id);
-            logger.info(lessonNugget.toString());
-            logger.info(readingFact.toString());
+            storeFact(readingFact, lessonNugget);
         }
         for (String r : gus) {
             Fact readingFact = new Fact(0, "gu", r, english, id);
             LessonNugget lessonNugget = new LessonNugget(getGus(r), id);
-            logger.info(lessonNugget.toString());
-            logger.info(readingFact.toString());
+            storeFact(readingFact, lessonNugget);
         }
         for (String r : jlpts) {
             Fact readingFact = new Fact(0, "jlpt", r, english, id);
             LessonNugget lessonNugget = new LessonNugget(getJlpt(r), id);
-            logger.info(lessonNugget.toString());
-            logger.info(readingFact.toString());
+            storeFact(readingFact, lessonNugget);
         }
 
+    }
+
+    private void storeFact(Fact readingFact) {
+        if (isLive)  {
+            contentDao.createFact(readingFact);
+        }
+        logger.info(readingFact.toString());
+    }
+
+    private void storeFact(Fact readingFact, LessonNugget lessonNugget) {
+        if (isLive)  {
+            contentDao.createFact(readingFact);
+        } else {
+            contentDao.createLessonNugget(lessonNugget);
+        }
+        logger.info(lessonNugget.toString());
+        logger.info(readingFact.toString());
     }
 
     private long getGenki(String r) {

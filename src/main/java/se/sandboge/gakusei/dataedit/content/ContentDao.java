@@ -110,4 +110,18 @@ public class ContentDao {
         return query;
     }
 
+    public void createNugget(Nugget nugget) {
+        jdbcTemplate.update("INSERT INTO contentschema.nuggets(id, type, description, hidden) VALUES (?,?,?,?)"
+                , nugget.getId(), nugget.getType(), nugget.getDescription(), nugget.getHidden());
+    }
+
+    public void createFact(Fact fact) {
+        jdbcTemplate.update("INSERT INTO contentschema.facts(type, data, description, nuggetid) VALUES (?,?,?,?)"
+        , fact.getType(), fact.getData(), fact.getDescription(), fact.getNuggetid());
+    }
+
+    public void createLessonNugget(LessonNugget lessonNugget) {
+        jdbcTemplate.update("INSERT INTO contentschema.lessons_nuggets(lesson_id, nugget_id) VALUES (?,?)"
+                , lessonNugget.getLessonId(), lessonNugget.getNuggetId());
+    }
 }
