@@ -17,4 +17,12 @@ public class LessonNugget {
     public String getNuggetId() {
         return nuggetId;
     }
+
+    @Override
+    public String toString() {
+        return "LessonNugget{" +
+                "lessonId=" + lessonId +
+                ", nuggetId='" + nuggetId + '\'' +
+                '}';
+    }
 }

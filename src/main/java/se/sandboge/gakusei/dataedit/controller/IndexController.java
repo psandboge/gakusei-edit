@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import se.sandboge.gakusei.dataedit.content.ContentDao;
+import se.sandboge.gakusei.dataedit.content.Importer;
 import se.sandboge.gakusei.dataedit.content.Nugget;
 
 import java.util.Collections;
@@ -15,10 +16,12 @@ import java.util.List;
 public class IndexController {
 
     private final ContentDao contentDao;
+    private final Importer importer;
 
     @Autowired
-    public IndexController(ContentDao contentDao) {
+    public IndexController(ContentDao contentDao, Importer importer) {
         this.contentDao = contentDao;
+        this.importer = importer;
     }
 
 
@@ -66,6 +69,12 @@ public class IndexController {
         }
         model.addAttribute("existingNuggets", existingNuggets);
         return "addword";
+    }
+
+    @RequestMapping("/importfile")
+    public String importFile(@RequestParam(defaultValue = "false") boolean isLive) {
+        importer.readFiles(isLive);
+        return "index";
     }
 
 }

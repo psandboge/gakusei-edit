@@ -1,6 +1,3 @@
-/gcon.csv
-|
-§
 /n1b.csv
 |
 ,

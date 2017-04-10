@@ -3,6 +3,7 @@ package se.sandboge.gakusei.dataedit.content;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +13,37 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Pattern;
 
+@Service
 public class Importer {
+
+    private static final Map lessonNugget = new HashMap<String, Long>();
+    static {
+        lessonNugget.put("GENKI 1", 21L);
+        lessonNugget.put("GENKI 13", 22L);
+        lessonNugget.put("GENKI 14", 20L);
+        lessonNugget.put("GENKI 15", 24L);
+        lessonNugget.put("GENKI 16", 23L);
+        lessonNugget.put("GENKI 17", 18L);
+        lessonNugget.put("GENKI 18", 16L);
+        lessonNugget.put("GENKI 2", 19L);
+        lessonNugget.put("GENKI 4", 17L);
+        lessonNugget.put("GENKI 9", 15L);
+        lessonNugget.put("GU JP1200", 1000L);
+        lessonNugget.put("JLPT N1", 12L);
+        lessonNugget.put("JLPT N2", 11L);
+        lessonNugget.put("JLPT N3", 10L);
+        lessonNugget.put("JLPT N4", 14L);
+        lessonNugget.put("JLPT N5", 13L);
+        lessonNugget.put("KLL 13", 8L);
+        lessonNugget.put("KLL 14", 5L);
+        lessonNugget.put("KLL 15", 4L);
+        lessonNugget.put("KLL 16", 7L);
+        lessonNugget.put("KLL 17", 6L);
+        lessonNugget.put("KLL 18", 3L);
+        lessonNugget.put("KLL 19", 2L);
+        lessonNugget.put("KLL 20", 9L);
+    }
+
     private Logger logger = LoggerFactory.getLogger(Importer.class);
     private String prefix;
     private int errCount;
@@ -20,11 +51,13 @@ public class Importer {
     private int propsCount;
     private boolean hasIdProp;
     private int idCount;
+    private boolean isLive = false;
 
-    public void readFiles(String fileName) {
+    public void readFiles(boolean isLive) {
+        this.isLive = isLive;
         String name;
         try (
-                InputStream fis = Importer.class.getResourceAsStream(fileName);
+                InputStream fis = Importer.class.getResourceAsStream("/files.txt");
                 InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
                 BufferedReader br = new BufferedReader(isr)
         ) {
@@ -121,15 +154,110 @@ public class Importer {
     }
 
     private void saveNugget(Map<String, Object> nuggetMap) {
+        List<String> readings = (List<String>)nuggetMap.getOrDefault("reading", Collections.EMPTY_LIST);
+        List<String> writings = (List<String>)nuggetMap.getOrDefault("writing", Collections.EMPTY_LIST);
+        List<String> swedishs = (List<String>)nuggetMap.getOrDefault("swedish", Collections.EMPTY_LIST);
+        List<String> englishs = (List<String>)nuggetMap.getOrDefault("english", Collections.EMPTY_LIST);
+        List<String> genkis = (List<String>)nuggetMap.getOrDefault("genki", Collections.EMPTY_LIST);
+        List<String> klls = (List<String>)nuggetMap.getOrDefault("kll", Collections.EMPTY_LIST);
+        List<String> gus = (List<String>)nuggetMap.getOrDefault("gu", Collections.EMPTY_LIST);
+        List<String> jlpts = (List<String>)nuggetMap.getOrDefault("jlpt", Collections.EMPTY_LIST);
+
+        String english = "";
+        if (englishs.size() > 0) {
+            english = englishs.get(0);
+        }
         String id = nuggetMap.get("id").toString();
-        String type = nuggetMap.get("type").toString();
-        String description = nuggetMap.get("description").toString();
-        Nugget nugget = new Nugget(id, type, description, true);
+        List<String> types = (List<String>)nuggetMap.get("type");
+        String description = nuggetMap.getOrDefault("description", english).toString();
+        Nugget nugget = new Nugget(id, types.get(0), description, true);
+
         logger.info(nugget.toString());
+
+        for (String r : readings) {
+            Fact readingFact = new Fact(0, "reading", r, english, id);
+            logger.info(readingFact.toString());
+        }
+        for (String r : writings) {
+            Fact readingFact = new Fact(0, "writing", r, english, id);
+            logger.info(readingFact.toString());
+        }
+        for (String r : swedishs) {
+            Fact readingFact = new Fact(0, "swedish", r, english, id);
+            logger.info(readingFact.toString());
+        }
+        for (String r : englishs) {
+            Fact readingFact = new Fact(0, "english", r, english, id);
+            logger.info(readingFact.toString());
+        }
+        for (String r : genkis) {
+            Fact readingFact = new Fact(0, "genki", r, english, id);
+            LessonNugget lessonNugget = new LessonNugget(getGenki(r), id);
+            logger.info(lessonNugget.toString());
+            logger.info(readingFact.toString());
+        }
+        for (String r : klls) {
+            Fact readingFact = new Fact(0, "kll", r, english, id);
+            LessonNugget lessonNugget = new LessonNugget(getKlls(r), id);
+            logger.info(lessonNugget.toString());
+            logger.info(readingFact.toString());
+        }
+        for (String r : gus) {
+            Fact readingFact = new Fact(0, "gu", r, english, id);
+            LessonNugget lessonNugget = new LessonNugget(getGus(r), id);
+            logger.info(lessonNugget.toString());
+            logger.info(readingFact.toString());
+        }
+        for (String r : jlpts) {
+            Fact readingFact = new Fact(0, "jlpt", r, english, id);
+            LessonNugget lessonNugget = new LessonNugget(getJlpt(r), id);
+            logger.info(lessonNugget.toString());
+            logger.info(readingFact.toString());
+        }
+
+    }
+
+    private long getGenki(String r) {
+        try {
+            return (long)lessonNugget.get("GENKI " + r.toUpperCase());
+        } catch (NullPointerException e) {
+            logger.error("Missing link: {}", r);
+            throw e;
+        }
+    }
+
+    private long getJlpt(String r) {
+        try {
+            return (long)lessonNugget.get("JLPT " + r.toUpperCase());
+        } catch (NullPointerException e) {
+            logger.error("Missing link: {}", r);
+            throw e;
+        }
+    }
+
+    private long getKlls(String r) {
+        try {
+            return (long)lessonNugget.get("KLL " + r.toUpperCase());
+        } catch (NullPointerException e) {
+            logger.error("Missing link: {}", r);
+            throw e;
+        }
+    }
+
+    private long getGus(String r) {
+        try {
+            return (long)lessonNugget.get("GU " + r.toUpperCase());
+        } catch (NullPointerException e) {
+            logger.error("Missing link: {}", r);
+            throw e;
+        }
     }
 
     private List<String> handleFact(String value, String separator) {
         String[] values = value.split(Pattern.quote(separator));
+        for (int i = 0; i < values.length; i++) {
+            values[i] = values[i].trim();
+        }
         return new ArrayList<>(Arrays.asList(values));
 
     }
