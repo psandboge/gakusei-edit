@@ -235,7 +235,6 @@ public class Importer {
     private void storeFact(Fact readingFact, LessonNugget lessonNugget) {
         if (isLive)  {
             contentDao.createFact(readingFact);
-        } else {
             contentDao.createLessonNugget(lessonNugget);
         }
         logger.info(lessonNugget.toString());
